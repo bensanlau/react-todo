@@ -1,5 +1,14 @@
-export default function Footer({ todos, onClear }) {
+export default function Footer({ todos, filterView, onFilterViewChange, onClear }) {
   const todoCount = todos.filter((todo) => !todo.completed).length;
+  const views = [
+    { label: 'All', href: '#/' },
+    { label: 'Active', href: '#/active' },
+    { label: 'Completed', href: '#/completed' },
+  ];
+
+  function handleView(e) {
+    onFilterViewChange(e.target.textContent.toLowerCase());
+  }
 
   return (
     <footer className="footer">
@@ -8,17 +17,17 @@ export default function Footer({ todos, onClear }) {
         {todoCount === 1 ? '' : 's'} left
       </span>
       <ul className="filters">
-        <li>
-          <a href="#/" className="selected">
-            All
-          </a>
-        </li>
-        <li>
-          <a href="#/active">Active</a>
-        </li>
-        <li>
-          <a href="#/completed">Completed</a>
-        </li>
+        {views.map((view) => (
+          <li key={view.label.toLowerCase()}>
+            <a
+              onClick={handleView}
+              href={view.href}
+              className={filterView === view.label.toLowerCase() ? 'selected' : ''}
+            >
+              {view.label}
+            </a>
+          </li>
+        ))}
       </ul>
       {todos.some((todo) => todo.completed) && (
         <button className="clear-completed" onClick={() => onClear()}>
