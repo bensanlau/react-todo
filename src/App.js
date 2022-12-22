@@ -13,7 +13,7 @@ function App() {
     }
   });
 
-  function handleTodo(todo) {
+  function handleAdd(todo) {
     setTodos([
       ...todos,
       {
@@ -22,10 +22,6 @@ function App() {
         completed: false,
       },
     ]);
-  }
-
-  function handleDelete(todoId) {
-    setTodos(todos.filter((item) => item.id !== todoId));
   }
 
   function handleChange(todo) {
@@ -40,29 +36,32 @@ function App() {
     );
   }
 
-  function handleCheckAll(isCheckAll) {
-    setTodos(
-      todos.map((todo) => {
-        return { ...todo, completed: isCheckAll };
-      })
-    );
-  }
-
   useEffect(() => {
     localStorage.setItem('react-todos', JSON.stringify(todos));
   });
 
   return (
     <section className="todoapp">
-      <Header onAddTodo={handleTodo} />
+      <Header onAddTodo={handleAdd} />
       <List
         todos={todos}
-        isCheckAll={todos.every((todo) => todo.completed === true)}
+        isCheckAll={todos.every((todo) => todo.completed)}
         onChangeTodo={handleChange}
-        onDeleteTodo={handleDelete}
-        onCheckAll={handleCheckAll}
+        onDeleteTodo={(todoId) => setTodos(todos.filter((item) => item.id !== todoId))}
+        onCheckAll={(isCheckAll) =>
+          setTodos(
+            todos.map((todo) => {
+              return { ...todo, completed: isCheckAll };
+            })
+          )
+        }
       />
-      {todos.length > 0 && <Footer />}
+      {todos.length > 0 && (
+        <Footer
+          onClear={() => setTodos(todos.filter((todo) => !todo.completed))}
+          todos={todos}
+        />
+      )}
     </section>
   );
 }
